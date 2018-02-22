@@ -11,47 +11,73 @@ var MemoryGame = MemoryGame || {}; //No hacer nada con ella, crea un objeto vaci
 MemoryGame = function(gs) {
 
 	this.gs = gs;
+	this.arrayCartas = [];
 	this.cartasTipo = [];
 	this.cartasTablero = [];
+	this.cartaBack;
 	this.numCartasEncontradas = 0;
+	this.cartasVolteadas = 0;
+	this.cartaArribaTile;
+	this.cartaArribaPos;
 	this.texto = 'Memory Game';
 
-	var that = this;	
-
-		/*var creaCartasTipo = function() {
-			var i = 0;
-			console.log(this);
-			for (var tile in gs.maps) {
-				that.cartasTipo[i] = tile;//RANDOMIZAR DESPUEEES 
-				i++;
-			};
-		};*/
-
+	var that = this;
 	this.initGame = function() {
 
-		var i = 0;
-		while (i < 16) {
-			if ( (i/2) != 1 ) {
-				that.cartasTablero[i] = that.cartasTipo[i/2];
-				i++;
+		var j = 0;
+		for (var tile in that.gs.maps) {
+			if (tile == "back") {
+				this.cartaBack = tile;
+			} else {
+				that.cartasTipo[j] = tile;
+				j++;
 			}
 		};
-		console.log(that.cartasTablero);
-		console.log(that.cartasTipo);
+		var i = 0;
+		while (i < 16) {
+			that.arrayCartas[i] = new MemoryGameCard(that.cartasTipo[i%8]);
+			that.arrayCartas[i].prototype = that;
+			i++;
+		};
 		//console.log(gs.maps[this.cartas[3]]);//Mirar así
-		
+
+		that.loop();
+
 	};
 
 	this.draw = function() {
+		that.gs.drawMessage(that.texto);
 
+		for (var i = 0; i < 16; i++) {
+			that.arrayCartas[i].draw(that.gs,i);
+		}
 	};
 
 	this.loop = function() {
-		
+		setInterval(that.draw(),16);
 	};
 
 	this.onClick = function(cardId) {
-		
+		that.cartasVolteadas++;
+		that.gs.draw(that.cartasTablero[cardId],cardId);
+
+		if (that.cartasVolteadas == 1) {
+			that.cartaArribaTile = that.cartasTablero[cardId];
+			that.cartaArribaPos = cardId;
+		} else {
+			if (that.cartasTablero[cardId] == that.cartaArribaTile) {
+				that.numCartasEncontradas += 2;
+				if (that.numCartasEncontradas == 16) {
+					that.gs.drawMessage('¡Enhorabuena!');
+				}
+			} else {
+				setTimeout(function() {
+					that.gs.draw(that.cartaBack, cardId);
+					that.gs.draw(that.cartaBack, that.cartaArribaPos);
+				}, 1000);
+			}
+			that.cartasVolteadas = 0;
+		}
 	};
 
 };
@@ -65,5 +91,38 @@ MemoryGame = function(gs) {
  * @param {string} id Nombre del sprite que representa la carta
  */
 MemoryGameCard = function(id) {
+	this.teja = id;
+	this.status = 0;//0 = abajo, 1 = arriba o  2 = encontrada
+	this.padre = Object.getPrototypeOf(this);
+	var thatC = this;
+	this.draw = function(gs, pos) {
+		switch(thatC.status) {
+			case 0:
+				console.log(thatC.padre);
+				//gs.draw(thatC.padre.cartaBack, pos);
+				break;
+			case 1:
+				//gs.draw(thatC.teja, pos);
+				break;
+			case 2:
+				//gs.draw(thatC.teja, pos);
+				break;
+			default:
+				break;
+		}
+	}
 
+	this.flip = function() {
+		thatC.status = (thatC.status+1)%2;
+	}
+
+	this.found = function() {
+		thatC.status = 2;
+	}
+
+	this.compareTo = function(otherCard) {
+		return (thatC.teja === otherCard);
+	}
 };
+
+//MemoryGameCard.prototype = MemoryGame;
