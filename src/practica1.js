@@ -32,9 +32,8 @@ MemoryGame = function(gs) {
 				j++;
 			}
 		}
-		for (var i = 0; i < 16; i++) 
+		for (var i = 0; i < 16; i++)
 			that.arrayCartas[i] = new MemoryGameCard(that.cartasTipo[i%8]);
-		console.log(that.arrayCartas);
 
 		that.loop();
 	};
@@ -43,7 +42,7 @@ MemoryGame = function(gs) {
 		that.gs.drawMessage(that.texto);
 		var i = 0;
 		for (var i = 0; i < 16; i++)
-			that.arrayCartas[i].draw(that.gs,i);	
+			that.arrayCartas[i].draw(that.gs,i);
 	};
 
 	this.loop = function() {
@@ -51,7 +50,7 @@ MemoryGame = function(gs) {
 	};
 
 	//* @param {int} CardId
-	this.onClick = function(cardId) { 
+	this.onClick = function(cardId) {
 		that.cartasVolteadas++;
 		that.arrayCartas[cardId].flip();
 
@@ -68,14 +67,18 @@ MemoryGame = function(gs) {
 					that.texto = "Enhorabuena";
 				}
 			} else {
-				
-				console.log(that.arrayCartas[1].onclick);
-				that.arrayCartas[1].onclick = null;
+				/*document.getElementById("gamecontainer").style.pointerEvents =  'none';
+				document.getElementById("gamecontainer").style.cursor =  'not-allowed';
+
+				var myCanvas = document.getElementsByClassName("canvas");
+				myCanvas.selection = false;
+				myCanvas.selectable = false;*/
+
 				setTimeout(function() {
 					that.arrayCartas[cardId].flip();
 					that.arrayCartas[that.cartaArribaPos].flip();
-				}, 1000);
-			
+				}, 8000);
+
 			}
 			that.cartasVolteadas = 0;
 		}
