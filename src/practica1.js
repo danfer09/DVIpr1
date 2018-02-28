@@ -19,6 +19,7 @@ MemoryGame = function(gs) {
 	this.cartaArribaTile;
 	this.cartaArribaPos;
 	this.texto = 'Memory Game';
+	this.tocable = true;
 
 	var that = this;
 	this.initGame = function() {
@@ -51,36 +52,41 @@ MemoryGame = function(gs) {
 
 	//* @param {int} CardId
 	this.onClick = function(cardId) {
-		that.cartasVolteadas++;
-		that.arrayCartas[cardId].flip();
+		if (that.tocable && that.arrayCartas[cardId].status == 0) {
+			that.cartasVolteadas++;
+			that.arrayCartas[cardId].flip();
 
-		if (that.cartasVolteadas == 1) {
-			that.cartaArribaTile = that.arrayCartas[cardId];
-			that.cartaArribaPos = cardId;
-		} else {
-			if (that.arrayCartas[cardId].compareTo(that.cartaArribaTile)) {
-				that.numCartasEncontradas += 2;
-				that.arrayCartas[cardId].found();
-				that.arrayCartas[that.cartaArribaPos].found();
-
-				if (that.numCartasEncontradas == 16) {
-					that.texto = "Enhorabuena";
-				}
+			if (that.cartasVolteadas == 1) {
+				that.cartaArribaTile = that.arrayCartas[cardId];
+				that.cartaArribaPos = cardId;
 			} else {
-				/*document.getElementById("gamecontainer").style.pointerEvents =  'none';
-				document.getElementById("gamecontainer").style.cursor =  'not-allowed';
+				if (that.arrayCartas[cardId].compareTo(that.cartaArribaTile)) {
+					that.numCartasEncontradas += 2;
+					that.arrayCartas[cardId].found();
+					that.arrayCartas[that.cartaArribaPos].found();
 
-				var myCanvas = document.getElementsByClassName("canvas");
-				myCanvas.selection = false;
-				myCanvas.selectable = false;*/
-
-				setTimeout(function() {
-					that.arrayCartas[cardId].flip();
-					that.arrayCartas[that.cartaArribaPos].flip();
-				}, 8000);
-
+					if (that.numCartasEncontradas == 16) {
+						that.texto = "¡Congratulations!";
+					} else {
+						that.texto = "¡It´s a match!";
+						that.tocable = false;
+						setTimeout(function() {
+							that.tocable = true;
+							that.texto = "Memory Game";
+						}, 1100);
+					}
+				} else {
+					that.texto = "¡Error!";
+					that.tocable = false;
+					setTimeout(function() {
+						that.tocable = true;
+						that.arrayCartas[cardId].flip();
+						that.arrayCartas[that.cartaArribaPos].flip();
+						that.texto = "Memory Game";
+					}, 1000);
+				}
+				that.cartasVolteadas = 0;
 			}
-			that.cartasVolteadas = 0;
 		}
 	};
 
