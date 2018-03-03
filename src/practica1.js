@@ -48,20 +48,20 @@ MemoryGame = function(gs) {
 		var totalCartas = 0;
 		var i = 0;
 		while (totalCartas < 16){
-			j = that.numeroAleatorio(8);
-			if(that.numTipos[j]<2){
+			al = that.numeroAleatorio(7);
+			if(that.numTipos[al]<2){
 				totalCartas++;
-				that.numTipos[j]++;
+				that.numTipos[al]++;
 			}
 			else{
-				while(that.numTipos[j]==2){
-					j = that.numeroAleatorio(8);
+				while(that.numTipos[al]==2){
+					al = that.numeroAleatorio(7);
 				}
 				totalCartas++;
-				that.numTipos[j]++;
+				that.numTipos[al]++;
 			}
 
-			that.arrayCartas[i] = new MemoryGameCard(that.cartasTipo[that.numeroAleatorio(8)]);
+			that.arrayCartas[i] = new MemoryGameCard(that.cartasTipo[al]);
 			i++;
 		}
 
