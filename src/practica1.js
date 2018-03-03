@@ -20,8 +20,19 @@ MemoryGame = function(gs) {
 	this.cartaArribaPos;
 	this.texto = 'Memory Game';
 	this.tocable = true;
+	this.numTipos = []
 
 	var that = this;
+
+	this.numeroAleatorio = function(num) {
+		return Math.floor(Math.random()*(num+1));
+	}
+
+	this.initNumTipos = function(){
+		for (var i = 0; i < 9; i++) {
+			that.numTipos[i]= 0;
+		}
+	} 
 	this.initGame = function() {
 
 		var j = 0;
@@ -33,8 +44,26 @@ MemoryGame = function(gs) {
 				j++;
 			}
 		}
-		for (var i = 0; i < 16; i++)
-			that.arrayCartas[i] = new MemoryGameCard(that.cartasTipo[i%8]);
+		that.initNumTipos();
+		var totalCartas = 0;
+		var i = 0;
+		while (totalCartas < 16){
+			j = that.numeroAleatorio(8);
+			if(that.numTipos[j]<2){
+				totalCartas++;
+				that.numTipos[j]++;
+			}
+			else{
+				while(that.numTipos[j]==2){
+					j = that.numeroAleatorio(8);
+				}
+				totalCartas++;
+				that.numTipos[j]++;
+			}
+
+			that.arrayCartas[i] = new MemoryGameCard(that.cartasTipo[that.numeroAleatorio(8)]);
+			i++;
+		}
 
 		that.loop();
 	};
